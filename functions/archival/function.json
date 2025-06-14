@@ -1,0 +1,13 @@
+{
+  "bindings": [
+    {
+      "type": "cosmosDBTrigger",
+      "name": "documents",
+      "direction": "in",
+      "leaseCollectionName": "leases",
+      "connectionStringSetting": "COSMOSDB_CONNECTION_STRING",
+      "databaseName": "billing-db",
+      "collectionName": "billing-records"
+    }
+  ]
+}
