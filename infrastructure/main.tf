@@ -1,4 +1,3 @@
-```hcl
 provider "azurerm" {
   features {}
 }
@@ -30,7 +29,6 @@ resource "azurerm_cosmosdb_account" "example" {
     failover_priority = 0
   }
 
-  # Enable serverless capability via capabilities block
   capabilities {
     name = "EnableServerless"
   }
@@ -47,7 +45,7 @@ resource "azurerm_cosmosdb_sql_container" "example" {
   resource_group_name = azurerm_resource_group.example.name
   account_name        = azurerm_cosmosdb_account.example.name
   database_name       = azurerm_cosmosdb_sql_database.example.name
-  partition_key_path  = "/customerId"
+  partition_key_paths = ["/customerId"]
   default_ttl         = 7776000 # 3 months
 }
 
@@ -56,7 +54,7 @@ resource "azurerm_cosmosdb_sql_container" "leases" {
   resource_group_name = azurerm_resource_group.example.name
   account_name        = azurerm_cosmosdb_account.example.name
   database_name       = azurerm_cosmosdb_sql_database.example.name
-  partition_key_path  = "/id"
+  partition_key_paths = ["/id"]
 }
 
 resource "azurerm_storage_account" "example" {
@@ -79,7 +77,7 @@ resource "azurerm_service_plan" "example" {
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   os_type             = "Linux"
-  sku_name            = "Y1" # Dynamic for Consumption plan
+  sku_name            = "Y1"
 }
 
 resource "azurerm_linux_function_app" "archival" {
@@ -91,9 +89,9 @@ resource "azurerm_linux_function_app" "archival" {
   storage_account_access_key = azurerm_storage_account.example.primary_access_key
 
   app_settings = {
-    "FUNCTIONS_WORKER_RUNTIME" = "python"
-    "COSMOSDB_CONNECTION_STRING" = azurerm_cosmosdb_account.example.connection_strings[0]
-    "BLOB_CONNECTION_STRING" = azurerm_storage_account.example.primary_connection_string
+    "FUNCTIONS_WORKER_RUNTIME"   = "python"
+    "COSMOSDB_CONNECTION_STRING" = azurerm_cosmosdb_account.example.primary_sql_connection_string
+    "BLOB_CONNECTION_STRING"     = azurerm_storage_account.example.primary_connection_string
   }
 
   site_config {
@@ -112,9 +110,9 @@ resource "azurerm_linux_function_app" "retrieval" {
   storage_account_access_key = azurerm_storage_account.example.primary_access_key
 
   app_settings = {
-    "FUNCTIONS_WORKER_RUNTIME" = "python"
-    "COSMOSDB_CONNECTION_STRING" = azurerm_cosmosdb_account.example.connection_strings[0]
-    "BLOB_CONNECTION_STRING" = azurerm_storage_account.example.primary_connection_string
+    "FUNCTIONS_WORKER_RUNTIME"   = "python"
+    "COSMOSDB_CONNECTION_STRING" = azurerm_cosmosdb_account.example.primary_sql_connection_string
+    "BLOB_CONNECTION_STRING"     = azurerm_storage_account.example.primary_connection_string
   }
 
   site_config {
@@ -123,4 +121,3 @@ resource "azurerm_linux_function_app" "retrieval" {
     }
   }
 }
-```
